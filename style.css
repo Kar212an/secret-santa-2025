@@ -1,52 +1,124 @@
 body {
-    background: linear-gradient(120deg, #212121, #3a3a3a);
+    margin: 0;
+    padding: 0;
+    background: radial-gradient(circle at top, #333, #111);
     color: white;
     font-family: Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .container {
+    width: 90%;
     max-width: 450px;
-    margin: 60px auto;
-    padding: 25px;
+    margin: 20px auto;
+    padding: 20px;
     background: rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.12);
     text-align: center;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(6px);
 }
 
 h1 {
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     color: #ffe066;
+    font-size: 24px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 15px;
 }
 
 select, button {
     padding: 12px;
-    width: 80%;
-    margin: 12px 0;
+    width: 100%;
+    margin: 10px 0;
     font-size: 16px;
     border-radius: 8px;
+    border: none;
+    box-sizing: border-box;
 }
 
 button {
     background-color: #ffcc00;
-    border: none;
     cursor: pointer;
     font-weight: bold;
 }
 
-button:hover {
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
     background-color: #ffdd33;
 }
 
 .big {
-    font-size: 48px;
+    font-size: 40px;
     color: #00ffcc;
-    margin-top: 10px;
+    margin: 0;
 }
 
 .note {
-    margin-top: 10px;
+    margin-top: 14px;
     font-size: 14px;
-    opacity: 0.7;
+    opacity: 0.8;
+}
+
+/* Slot / casino style area */
+.slot-wrapper {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.slot-window {
+    width: 100%;
+    max-width: 260px;
+    height: 70px;
+    border-radius: 10px;
+    border: 3px solid #ffcc00;
+    background: #000000bb;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+}
+
+.slot-pin {
+    font-size: 26px;
+    color: #ff4444;
+}
+
+/* Mobile tweaks */
+@media (max-width: 600px) {
+    .container {
+        padding: 16px;
+        margin: 10px auto;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    .big {
+        font-size: 32px;
+    }
+
+    select, button {
+        font-size: 14px;
+    }
+
+    .slot-window {
+        height: 60px;
+    }
 }
