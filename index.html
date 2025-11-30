@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Secret Santa Draw</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🎉 New Year Secret Santa 2025 🎁</h1>
+
+        <div id="step1">
+            <label>Enter your name:</label>
+            <select id="userName">
+                <option value="">-- Select --</option>
+                <option>Karan</option>
+                <option>Krisha</option>
+                <option>Rekha</option>
+                <option>Raj</option>
+                <option>Shashi</option>
+                <option>Roopesh</option>
+                <option>Roosh</option>
+                <option>Manisha</option>
+                <option>Trevor</option>
+                <option>Shannon</option>
+            </select>
+            <button onclick="proceed()">Proceed</button>
+        </div>
+
+        <div id="step2" style="display:none;">
+            <h2 id="welcome"></h2>
+            <button id="revealBtn" onclick="reveal()">Reveal Your Secret Santa</button>
+        </div>
+
+        <div id="result" style="display:none;">
+            <h2>You got:</h2>
+            <h1 id="assignedName" class="big"></h1>
+            <p class="note">This assignment is locked and cannot be changed.</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
