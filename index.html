@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Secret Santa Draw</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -9,7 +10,7 @@
         <h1>🎉 New Year Secret Santa 2025 🎁</h1>
 
         <div id="step1">
-            <label>Enter your name:</label>
+            <label for="userName">Enter your name:</label>
             <select id="userName">
                 <option value="">-- Select --</option>
                 <option>Karan</option>
@@ -33,7 +34,12 @@
 
         <div id="result" style="display:none;">
             <h2>You got:</h2>
-            <h1 id="assignedName" class="big"></h1>
+            <div class="slot-wrapper">
+                <div class="slot-pin">▼</div>
+                <div class="slot-window">
+                    <div id="slotName" class="big">?</div>
+                </div>
+            </div>
             <p class="note">This assignment is locked and cannot be changed.</p>
         </div>
     </div>
