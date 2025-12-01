@@ -29,17 +29,26 @@
 
         <div id="step2" style="display:none;">
             <h2 id="welcome"></h2>
-            <button id="revealBtn" onclick="reveal()">Reveal Your Secret Santa</button>
+            <button id="revealBtn" onclick="reveal()">Throw Dice & Reveal</button>
         </div>
 
         <div id="result" style="display:none;">
             <h2>You got:</h2>
-            <div class="slot-wrapper">
-                <div class="slot-pin">▼</div>
-                <div class="slot-window">
-                    <div id="slotName" class="big">?</div>
+
+            <!-- Ludo board style reveal -->
+            <div class="ludo-board">
+                <div class="ludo-background"></div>
+                <div class="dice-row" id="diceRow">
+                    <div class="dice"><span class="dice-letter">?</span></div>
+                    <div class="dice"><span class="dice-letter">?</span></div>
+                    <div class="dice"><span class="dice-letter">?</span></div>
+                    <div class="dice"><span class="dice-letter">?</span></div>
+                    <div class="dice"><span class="dice-letter">?</span></div>
+                    <div class="dice"><span class="dice-letter">?</span></div>
+                    <div class="dice"><span class="dice-letter">?</span></div>
                 </div>
             </div>
+
             <p class="note">This assignment is locked and cannot be changed.</p>
         </div>
     </div>
