@@ -110,12 +110,13 @@ function fillDiceWithName(name) {
         die.style.marginTop = "0";
 
         if (i < letters.length) {
-            // visible dice are part of layout
-            die.style.display = "flex";
+            die.style.visibility = "visible";
+            die.style.opacity = "1";
+            die.style.transform = "translateY(0)";
             span.innerText = letters[i];
         } else {
-            // extra dice are completely removed from layout
-            die.style.display = "none";
+            die.style.visibility = "hidden";
+            die.style.opacity = "0";
             span.innerText = "";
         }
     }
@@ -124,7 +125,7 @@ function fillDiceWithName(name) {
 /**
  * Main animation:
  * - board zooms in
- * - all needed dice appear with "?"
+ * - all dice appear with "?"
  * - then each die, one by one every 0.4s:
  *      - rolls random letters
  *      - stops and shows its final letter
@@ -148,7 +149,7 @@ function startLudoAnimation(name) {
         board.classList.add("zoom-in");
     }
 
-    // Prepare dice: visible ones show "?", hidden ones are removed from layout
+    // Prepare dice: visible ones show "?", hidden ones disappear
     for (let i = 0; i < MAX_DICE; i++) {
         const die = diceElements[i];
         const span = die.querySelector(".dice-letter");
@@ -157,10 +158,13 @@ function startLudoAnimation(name) {
         die.style.marginTop = "0";
 
         if (i < letters.length) {
-            die.style.display = "flex";
+            die.style.visibility = "visible";
+            die.style.opacity = "1";
+            die.style.transform = "translateY(0)";
             span.innerText = "?";
         } else {
-            die.style.display = "none";
+            die.style.visibility = "hidden";
+            die.style.opacity = "0";
             span.innerText = "";
         }
     }
