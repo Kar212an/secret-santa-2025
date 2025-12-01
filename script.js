@@ -12,16 +12,14 @@ const families = {
     "Manisha": 3, "Trevor": 3, "Shannon": 3
 };
 
+const MAX_DICE = 7;
+
 // Load storage (assignments + available names)
 let assigned = JSON.parse(localStorage.getItem("assigned")) || {};
 let available = JSON.parse(localStorage.getItem("available")) || people.slice();
 
 // Lock: which name has used this device
 let deviceLockedName = localStorage.getItem("deviceLockedName") || null;
-
-// Animation handles
-let animationInterval = null;
-let animationTimeout = null;
 
 function saveState() {
     localStorage.setItem("assigned", JSON.stringify(assigned));
@@ -48,12 +46,16 @@ function proceed() {
         return;
     }
 
+    const revealBtn = document.getElementById("revealBtn");
+
     // If this person already has an assigned name, show it directly (no animation)
     if (assigned[name]) {
         document.getElementById("step1").style.display = "none";
         document.getElementById("step2").style.display = "none";
         document.getElementById("result").style.display = "block";
-        document.getElementById("slotName").innerText = assigned[name];
+        fillDiceWithName(assigned[name]);
+        revealBtn.disabled = true;
+        revealBtn.innerText = "Revealed";
         return;
     }
 
@@ -62,33 +64,74 @@ function proceed() {
     document.getElementById("step2").style.display = "block";
 }
 
-function startSlotAnimation(chosen, spinPool) {
-    const slotNameEl = document.getElementById("slotName");
+function fillDiceWithName(name) {
+    const diceRow = document.getElementById("diceRow");
+    const diceElements = diceRow.querySelectorAll(".dice");
+    const letters = name.toUpperCase().split("");
+
+    for (let i = 0; i < MAX_DICE; i++) {
+        const die = diceElements[i];
+        const span = die.querySelector(".dice-letter");
+
+        if (i < letters.length) {
+            die.style.visibility = "visible";
+            span.innerText = letters[i];
+        } else {
+            die.style.visibility = "hidden";
+            span.innerText = "";
+        }
+    }
+}
+
+function startLudoAnimation(name) {
+    const diceRow = document.getElementById("diceRow");
+    const diceElements = diceRow.querySelectorAll(".dice");
+    const letters = name.toUpperCase().split("");
+    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const revealBtn = document.getElementById("revealBtn");
 
-    // Ensure result section visible
+    // Show result section
     document.getElementById("step2").style.display = "none";
     document.getElementById("result").style.display = "block";
 
+    // Prepare dice: hide unused
+    for (let i = 0; i < MAX_DICE; i++) {
+        const die = diceElements[i];
+        const span = die.querySelector(".dice-letter");
+        if (i < letters.length) {
+            die.style.visibility = "visible";
+            span.innerText = "?";
+        } else {
+            die.style.visibility = "hidden";
+            span.innerText = "";
+        }
+    }
+
     revealBtn.disabled = true;
-    revealBtn.innerText = "Drawing...";
+    revealBtn.innerText = "Rolling...";
 
-    // Use at least something to scroll
-    const pool = spinPool && spinPool.length ? spinPool : people.slice();
-    let idx = 0;
+    // Animate each die one by one
+    letters.forEach((letter, index) => {
+        const die = diceElements[index];
+        const span = die.querySelector(".dice-letter");
 
-    // Rapidly cycle through names
-    animationInterval = setInterval(() => {
-        slotNameEl.innerText = pool[idx % pool.length];
-        idx++;
-    }, 100); // change every 100ms
+        let ticks = 0;
+        const interval = setInterval(() => {
+            span.innerText = alphabet[Math.floor(Math.random() * alphabet.length)];
+            ticks++;
+        }, 80);
 
-    // Stop after 5 seconds on the chosen name
-    animationTimeout = setTimeout(() => {
-        clearInterval(animationInterval);
-        slotNameEl.innerText = chosen;
-        revealBtn.innerText = "Revealed";
-    }, 5000);
+        // Stop each die at a slightly later time than the previous
+        setTimeout(() => {
+            clearInterval(interval);
+            span.innerText = letter;
+
+            // When last die stops, mark as revealed
+            if (index === letters.length - 1) {
+                revealBtn.innerText = "Revealed";
+            }
+        }, 600 + index * 400); // tweak times for effect
+    });
 }
 
 function reveal() {
@@ -114,7 +157,7 @@ function reveal() {
     if (assigned[drawer]) {
         document.getElementById("step2").style.display = "none";
         document.getElementById("result").style.display = "block";
-        document.getElementById("slotName").innerText = assigned[drawer];
+        fillDiceWithName(assigned[drawer]);
         revealBtn.disabled = true;
         revealBtn.innerText = "Revealed";
         return;
@@ -146,6 +189,6 @@ function reveal() {
 
     saveState();
 
-    // Start the "casino" scrolling animation
-    startSlotAnimation(chosen, valid);
+    // Start the Ludo-style dice animation
+    startLudoAnimation(chosen);
 }
