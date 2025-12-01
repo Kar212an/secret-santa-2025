@@ -77,14 +77,13 @@ button:hover:not(:disabled) {
     inset: 0;
     border-radius: 16px;
     border: 3px solid #ffcc00;
-    background-image: linear-gradient(45deg, #008000 25%, transparent 25%),
-                      linear-gradient(-45deg, #008000 25%, transparent 25%),
-                      linear-gradient(45deg, transparent 75%, #008000 75%),
-                      linear-gradient(-45deg, transparent 75%, #008000 75%);
-    background-size: 24px 24px;
-    background-position: 0 0, 0 12px, 12px -12px, -12px 0;
-    opacity: 0.3;
+    background-image: url("ludo-board.jpg");
+    background-size: cover;
+    background-position: center;
+    opacity: 0.65;          /* lower = lighter, higher = stronger */
     pointer-events: none;
+
+
 }
 
 .dice-row {
