@@ -66,34 +66,39 @@ button:hover:not(:disabled) {
 }
 
 /* Ludo board style area */
+/* Ludo board style area */
 .ludo-board {
     position: relative;
-    margin-top: 18px;
-    padding: 16px;
+    width: 100%;
+    max-width: 320px;       /* Increase to make it larger */
+    height: 320px;          /* Perfect square for a board */
+    margin: 20px auto;      /* Center it */
 }
 
 .ludo-background {
     position: absolute;
     inset: 0;
-    border-radius: 16px;
+    border-radius: 12px;
     border: 3px solid #ffcc00;
-    background-image: url("ludo-board.jpg");
+    background-image: url("ludo-board.jpg");   /* keep your correct filename */
     background-size: cover;
     background-position: center;
-    opacity: 0.65;          /* lower = lighter, higher = stronger */
+    opacity: 0.9;          /* Stronger so board is fully visible */
     pointer-events: none;
-
-
 }
+
 
 .dice-row {
-    position: relative;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);   /* Perfect center */
     display: flex;
     justify-content: center;
-    gap: 8px;
-    flex-wrap: nowrap;
-    z-index: 1;
+    gap: 10px;
+    z-index: 5;
 }
+
 
 .dice {
     width: 38px;
