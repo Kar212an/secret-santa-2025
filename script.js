@@ -14,6 +14,15 @@ const families = {
 
 const MAX_DICE = 7;
 
+const STORAGE_VERSION = "v2";   // bump this if you ever change structure again
+
+if (localStorage.getItem("storageVersion") !== STORAGE_VERSION) {
+    localStorage.removeItem("assigned");
+    localStorage.removeItem("available");
+    localStorage.removeItem("deviceLockedName");
+    localStorage.setItem("storageVersion", STORAGE_VERSION);
+}
+
 // Safe JSON parse in case old data is corrupt
 function safeParse(key, fallback) {
     try {
