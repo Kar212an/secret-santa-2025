@@ -69,15 +69,32 @@ function fillDiceWithName(name) {
     const diceElements = diceRow.querySelectorAll(".dice");
     const letters = name.toUpperCase().split("");
 
+    const board = document.querySelector(".ludo-board");
+    if (board) {
+        board.classList.remove("zoom-in");
+        void board.offsetWidth; // reset animation
+        board.classList.add("zoom-in");
+    }
+
     for (let i = 0; i < MAX_DICE; i++) {
         const die = diceElements[i];
         const span = die.querySelector(".dice-letter");
 
+        die.classList.remove("rolling", "drop-in", "final-glow");
+        die.style.marginTop = "0";
+
         if (i < letters.length) {
             die.style.visibility = "visible";
+            die.style.opacity = "1";
+            die.style.transform = "translateY(0)";
             span.innerText = letters[i];
+
+            if (i === letters.length - 1) {
+                die.classList.add("final-glow");
+            }
         } else {
             die.style.visibility = "hidden";
+            die.style.opacity = "0";
             span.innerText = "";
         }
     }
@@ -89,20 +106,40 @@ function startLudoAnimation(name) {
     const letters = name.toUpperCase().split("");
     const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const revealBtn = document.getElementById("revealBtn");
+    const board = document.querySelector(".ludo-board");
 
     // Show result section
     document.getElementById("step2").style.display = "none";
     document.getElementById("result").style.display = "block";
 
-    // Prepare dice: hide unused
+    // Board zoom-in animation
+    if (board) {
+        board.classList.remove("zoom-in");
+        void board.offsetWidth; // restart animation
+        board.classList.add("zoom-in");
+    }
+
+    // Prepare dice: hide unused, reset classes
     for (let i = 0; i < MAX_DICE; i++) {
         const die = diceElements[i];
         const span = die.querySelector(".dice-letter");
+
+        die.classList.remove("rolling", "drop-in", "final-glow");
+        die.style.marginTop = "0";
+
         if (i < letters.length) {
             die.style.visibility = "visible";
+            die.style.opacity = "0";
+            die.style.transform = "translateY(-20px)";
             span.innerText = "?";
+
+            // staggered drop-in
+            setTimeout(() => {
+                die.classList.add("drop-in");
+            }, i * 120);
         } else {
             die.style.visibility = "hidden";
+            die.style.opacity = "0";
             span.innerText = "";
         }
     }
@@ -110,27 +147,32 @@ function startLudoAnimation(name) {
     revealBtn.disabled = true;
     revealBtn.innerText = "Rolling...";
 
-    // Animate each die one by one
+    // Animate each die: rolling letters then final letter
     letters.forEach((letter, index) => {
         const die = diceElements[index];
         const span = die.querySelector(".dice-letter");
 
-        let ticks = 0;
-        const interval = setInterval(() => {
-            span.innerText = alphabet[Math.floor(Math.random() * alphabet.length)];
-            ticks++;
-        }, 80);
-
-        // Stop each die at a slightly later time than the previous
+        // start rolling after a small delay so drop-in can begin
         setTimeout(() => {
-            clearInterval(interval);
-            span.innerText = letter;
+            die.classList.add("rolling");
 
-            // When last die stops, mark as revealed
-            if (index === letters.length - 1) {
-                revealBtn.innerText = "Revealed";
-            }
-        }, 600 + index * 400); // tweak times for effect
+            const interval = setInterval(() => {
+                span.innerText = alphabet[Math.floor(Math.random() * alphabet.length)];
+            }, 80);
+
+            // stop rolling and set final letter
+            setTimeout(() => {
+                clearInterval(interval);
+                die.classList.remove("rolling");
+                span.innerText = letter;
+
+                // glow on the final die
+                if (index === letters.length - 1) {
+                    die.classList.add("final-glow");
+                    revealBtn.innerText = "Revealed";
+                }
+            }, 600 + index * 400); // staggered stop times
+        }, index * 150);
     });
 }
 
