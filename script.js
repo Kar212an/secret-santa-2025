@@ -99,10 +99,6 @@ function fillDiceWithName(name) {
             die.style.opacity = "1";
             die.style.transform = "translateY(0)";
             span.innerText = letters[i];
-
-            if (i === letters.length - 1) {
-                die.classList.add("final-glow");
-            }
         } else {
             die.style.visibility = "hidden";
             die.style.opacity = "0";
@@ -130,7 +126,7 @@ function startLudoAnimation(name) {
         board.classList.add("zoom-in");
     }
 
-    // Prepare dice: drop in one by one, but no final letters yet
+    // Prepare dice: drop in one by one, initially "?"
     for (let i = 0; i < MAX_DICE; i++) {
         const die = diceElements[i];
         const span = die.querySelector(".dice-letter");
@@ -174,19 +170,19 @@ function startLudoAnimation(name) {
             });
         }, 80);
 
-        // Stop rolling after 2 seconds, set final letters and glow last die
-        setTimeout(() => {
-            clearInterval(interval);
-            visibleDice.forEach(({ die, span }, index) => {
+        // Now stop dice one by one, every 0.4s, setting final letters
+        visibleDice.forEach(({ die, span }, index) => {
+            setTimeout(() => {
                 die.classList.remove("rolling");
                 span.innerText = letters[index];
 
-                if (index === letters.length - 1) {
-                    die.classList.add("final-glow");
+                // When last die settles, stop the random interval and update button text
+                if (index === visibleDice.length - 1) {
+                    clearInterval(interval);
+                    revealBtn.innerText = "Revealed";
                 }
-            });
-            revealBtn.innerText = "Revealed";
-        }, 2000);
+            }, 400 * index); // 0.4 sec between reveals
+        });
     }, 600); // wait a bit so drop-in starts first
 }
 
