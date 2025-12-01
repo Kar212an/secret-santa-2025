@@ -164,20 +164,6 @@ button:hover:not(:disabled) {
     animation: diceBounce 0.3s ease-in-out infinite;
 }
 
-/* Glow on final letter */
-@keyframes glowPulse {
-    0%, 100% {
-        box-shadow: 0 0 0 rgba(255, 255, 0, 0);
-    }
-    50% {
-        box-shadow: 0 0 18px rgba(255, 255, 0, 0.95);
-    }
-}
-
-.dice.final-glow {
-    animation: glowPulse 0.8s ease-in-out 2;
-}
-
 /* Mobile tweaks */
 @media (max-width: 600px) {
     .container {
