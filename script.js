@@ -72,7 +72,7 @@ function fillDiceWithName(name) {
     const board = document.querySelector(".ludo-board");
     if (board) {
         board.classList.remove("zoom-in");
-        void board.offsetWidth; // reset animation
+        void board.offsetWidth; // restart animation
         board.classList.add("zoom-in");
     }
 
@@ -115,11 +115,11 @@ function startLudoAnimation(name) {
     // Board zoom-in animation
     if (board) {
         board.classList.remove("zoom-in");
-        void board.offsetWidth; // restart animation
+        void board.offsetWidth;
         board.classList.add("zoom-in");
     }
 
-    // Prepare dice: hide unused, reset classes
+    // Prepare dice: drop in one by one, but no final letters yet
     for (let i = 0; i < MAX_DICE; i++) {
         const die = diceElements[i];
         const span = die.querySelector(".dice-letter");
@@ -131,106 +131,4 @@ function startLudoAnimation(name) {
             die.style.visibility = "visible";
             die.style.opacity = "0";
             die.style.transform = "translateY(-20px)";
-            span.innerText = "?";
-
-            // staggered drop-in
-            setTimeout(() => {
-                die.classList.add("drop-in");
-            }, i * 120);
-        } else {
-            die.style.visibility = "hidden";
-            die.style.opacity = "0";
-            span.innerText = "";
-        }
-    }
-
-    revealBtn.disabled = true;
-    revealBtn.innerText = "Rolling...";
-
-    // Animate each die: rolling letters then final letter
-    letters.forEach((letter, index) => {
-        const die = diceElements[index];
-        const span = die.querySelector(".dice-letter");
-
-        // start rolling after a small delay so drop-in can begin
-        setTimeout(() => {
-            die.classList.add("rolling");
-
-            const interval = setInterval(() => {
-                span.innerText = alphabet[Math.floor(Math.random() * alphabet.length)];
-            }, 80);
-
-            // stop rolling and set final letter
-            setTimeout(() => {
-                clearInterval(interval);
-                die.classList.remove("rolling");
-                span.innerText = letter;
-
-                // glow on the final die
-                if (index === letters.length - 1) {
-                    die.classList.add("final-glow");
-                    revealBtn.innerText = "Revealed";
-                }
-            }, 600 + index * 400); // staggered stop times
-        }, index * 150);
-    });
-}
-
-function reveal() {
-    const drawer = document.getElementById("userName").value;
-    const revealBtn = document.getElementById("revealBtn");
-
-    if (!drawer) {
-        alert("Select your name first");
-        return;
-    }
-
-    // Block if this device is locked for someone else
-    if (deviceLockedName && deviceLockedName !== drawer) {
-        alert(
-            "This device has already been used by " +
-            deviceLockedName +
-            " to draw. Please use your own device."
-        );
-        return;
-    }
-
-    // If they already have an assignment (just re-show, no animation)
-    if (assigned[drawer]) {
-        document.getElementById("step2").style.display = "none";
-        document.getElementById("result").style.display = "block";
-        fillDiceWithName(assigned[drawer]);
-        revealBtn.disabled = true;
-        revealBtn.innerText = "Revealed";
-        return;
-    }
-
-    // Filter valid options: not themselves, not same family
-    let valid = available.filter(p =>
-        p !== drawer && families[p] !== families[drawer]
-    );
-
-    if (valid.length === 0) {
-        alert("No valid names left to assign. Contact the organiser.");
-        return;
-    }
-
-    // Choose the final name first (so animation ends on this)
-    const chosen = valid[Math.floor(Math.random() * valid.length)];
-
-    // Lock assignment
-    assigned[drawer] = chosen;
-
-    // Remove chosen from available list
-    available = available.filter(name => name !== chosen);
-
-    // Lock this device to this drawer (first time)
-    if (!deviceLockedName) {
-        deviceLockedName = drawer;
-    }
-
-    saveState();
-
-    // Start the Ludo-style dice animation
-    startLudoAnimation(chosen);
-}
+            span.innerText = "?"
