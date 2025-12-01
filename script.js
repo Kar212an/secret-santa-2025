@@ -100,7 +100,7 @@ function fillDiceWithName(name) {
         const die = diceElements[i];
         const span = die.querySelector(".dice-letter");
 
-        die.classList.remove("rolling", "drop-in", "final-glow");
+        die.classList.remove("rolling", "drop-in");
         die.style.marginTop = "0";
 
         if (i < letters.length) {
@@ -140,7 +140,7 @@ function startLudoAnimation(name) {
         const die = diceElements[i];
         const span = die.querySelector(".dice-letter");
 
-        die.classList.remove("rolling", "drop-in", "final-glow");
+        die.classList.remove("rolling", "drop-in");
         die.style.marginTop = "0";
 
         if (i < letters.length) {
