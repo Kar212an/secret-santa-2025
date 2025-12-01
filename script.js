@@ -259,3 +259,23 @@ function reveal() {
     // Start the Ludo-style dice animation
     startLudoAnimation(chosen);
 }
+
+/* ---------------- ADMIN RESET BUTTON ---------------- */
+
+// Show admin reset button on secret key combo: CTRL + SHIFT + R
+document.addEventListener("keydown", function (e) {
+    if (e.ctrlKey && e.shiftKey && e.key === "R") {
+        const btn = document.getElementById("adminResetBtn");
+        btn.style.display = "block";
+        alert("Admin Reset Mode Enabled");
+    }
+});
+
+// When admin clicks RESET
+document.getElementById("adminResetBtn").addEventListener("click", function () {
+    if (confirm("Are you sure? This will reset ALL assignments permanently.")) {
+        localStorage.clear();
+        location.reload();
+    }
+});
+
