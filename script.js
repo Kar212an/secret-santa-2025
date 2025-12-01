@@ -14,9 +14,20 @@ const families = {
 
 const MAX_DICE = 7;
 
+// Safe JSON parse in case old data is corrupt
+function safeParse(key, fallback) {
+    try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return fallback;
+        return JSON.parse(raw);
+    } catch (e) {
+        return fallback;
+    }
+}
+
 // Load storage (assignments + available names)
-let assigned = JSON.parse(localStorage.getItem("assigned")) || {};
-let available = JSON.parse(localStorage.getItem("available")) || people.slice();
+let assigned = safeParse("assigned", {});
+let available = safeParse("available", people.slice());
 
 // Lock: which name has used this device
 let deviceLockedName = localStorage.getItem("deviceLockedName") || null;
@@ -131,4 +142,109 @@ function startLudoAnimation(name) {
             die.style.visibility = "visible";
             die.style.opacity = "0";
             die.style.transform = "translateY(-20px)";
-            span.innerText = "?"
+            span.innerText = "?";
+
+            // staggered drop-in
+            setTimeout(() => {
+                die.classList.add("drop-in");
+            }, i * 120);
+        } else {
+            die.style.visibility = "hidden";
+            die.style.opacity = "0";
+            span.innerText = "";
+        }
+    }
+
+    revealBtn.disabled = true;
+    revealBtn.innerText = "Rolling...";
+
+    // After a short delay, start rolling animation for all visible dice together
+    setTimeout(() => {
+        const visibleDice = [];
+        for (let i = 0; i < letters.length; i++) {
+            const die = diceElements[i];
+            const span = die.querySelector(".dice-letter");
+            visibleDice.push({ die, span });
+            die.classList.add("rolling");
+        }
+
+        const interval = setInterval(() => {
+            visibleDice.forEach(({ span }) => {
+                span.innerText = alphabet[Math.floor(Math.random() * alphabet.length)];
+            });
+        }, 80);
+
+        // Stop rolling after 2 seconds, set final letters and glow last die
+        setTimeout(() => {
+            clearInterval(interval);
+            visibleDice.forEach(({ die, span }, index) => {
+                die.classList.remove("rolling");
+                span.innerText = letters[index];
+
+                if (index === letters.length - 1) {
+                    die.classList.add("final-glow");
+                }
+            });
+            revealBtn.innerText = "Revealed";
+        }, 2000);
+    }, 600); // wait a bit so drop-in starts first
+}
+
+function reveal() {
+    const drawer = document.getElementById("userName").value;
+    const revealBtn = document.getElementById("revealBtn");
+
+    if (!drawer) {
+        alert("Select your name first");
+        return;
+    }
+
+    // Block if this device is locked for someone else
+    if (deviceLockedName && deviceLockedName !== drawer) {
+        alert(
+            "This device has already been used by " +
+            deviceLockedName +
+            " to draw. Please use your own device."
+        );
+        return;
+    }
+
+    // If they already have an assignment (just re-show, no animation)
+    if (assigned[drawer]) {
+        document.getElementById("step2").style.display = "none";
+        document.getElementById("result").style.display = "block";
+        fillDiceWithName(assigned[drawer]);
+        revealBtn.disabled = true;
+        revealBtn.innerText = "Revealed";
+        return;
+    }
+
+    // Filter valid options: not themselves, not same family
+    let valid = available.filter(p =>
+        p !== drawer && families[p] !== families[drawer]
+    );
+
+    if (valid.length === 0) {
+        alert("No valid names left to assign. Contact the organiser.");
+        return;
+    }
+
+    // Choose the final name first (so animation ends on this)
+    const chosen = valid[Math.floor(Math.random() * valid.length)];
+
+    // Lock assignment
+    assigned[drawer] = chosen;
+
+    // Remove chosen from available list
+    available = available.filter(name => name !== chosen);
+
+    // Lock this device to this drawer (first time)
+    if (!deviceLockedName) {
+        deviceLockedName = drawer;
+    }
+
+    saveState();
+
+    // Start the Ludo-style dice animation
+    startLudoAnimation(chosen);
+}
