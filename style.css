@@ -98,7 +98,7 @@ button:hover:not(:disabled) {
     background-image: url("ludo-board.jpg"); /* change this if your filename is different */
     background-size: cover;
     background-position: center;
-    opacity: 0.9;
+    opacity: 0.4;
     pointer-events: none;
 }
 
