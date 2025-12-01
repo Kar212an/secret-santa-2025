@@ -14,7 +14,8 @@ const families = {
 
 const MAX_DICE = 7;
 
-const STORAGE_VERSION = "v2";   // bump this if you ever change structure again
+/* ---------- ONE-TIME STORAGE RESET (to avoid old corrupted data) ---------- */
+const STORAGE_VERSION = "v2";
 
 if (localStorage.getItem("storageVersion") !== STORAGE_VERSION) {
     localStorage.removeItem("assigned");
@@ -22,6 +23,7 @@ if (localStorage.getItem("storageVersion") !== STORAGE_VERSION) {
     localStorage.removeItem("deviceLockedName");
     localStorage.setItem("storageVersion", STORAGE_VERSION);
 }
+/* ------------------------------------------------------------------------- */
 
 // Safe JSON parse in case old data is corrupt
 function safeParse(key, fallback) {
@@ -84,6 +86,9 @@ function proceed() {
     document.getElementById("step2").style.display = "block";
 }
 
+/**
+ * Simple fill for when a user revisits – no animation, just show the name.
+ */
 function fillDiceWithName(name) {
     const diceRow = document.getElementById("diceRow");
     const diceElements = diceRow.querySelectorAll(".dice");
@@ -100,6 +105,7 @@ function fillDiceWithName(name) {
         const die = diceElements[i];
         const span = die.querySelector(".dice-letter");
 
+        // remove any animation classes
         die.classList.remove("rolling", "drop-in");
         die.style.marginTop = "0";
 
@@ -116,6 +122,14 @@ function fillDiceWithName(name) {
     }
 }
 
+/**
+ * Main animation:
+ * - board zooms in
+ * - all dice appear with "?"
+ * - then each die, one by one every 0.4s:
+ *      - rolls random letters
+ *      - stops and shows its final letter
+ */
 function startLudoAnimation(name) {
     const diceRow = document.getElementById("diceRow");
     const diceElements = diceRow.querySelectorAll(".dice");
@@ -135,7 +149,7 @@ function startLudoAnimation(name) {
         board.classList.add("zoom-in");
     }
 
-    // Prepare dice: drop in one by one, initially "?"
+    // Prepare dice: visible ones show "?", hidden ones disappear
     for (let i = 0; i < MAX_DICE; i++) {
         const die = diceElements[i];
         const span = die.querySelector(".dice-letter");
@@ -145,14 +159,9 @@ function startLudoAnimation(name) {
 
         if (i < letters.length) {
             die.style.visibility = "visible";
-            die.style.opacity = "0";
-            die.style.transform = "translateY(-20px)";
+            die.style.opacity = "1";
+            die.style.transform = "translateY(0)";
             span.innerText = "?";
-
-            // staggered drop-in
-            setTimeout(() => {
-                die.classList.add("drop-in");
-            }, i * 120);
         } else {
             die.style.visibility = "hidden";
             die.style.opacity = "0";
@@ -163,36 +172,33 @@ function startLudoAnimation(name) {
     revealBtn.disabled = true;
     revealBtn.innerText = "Rolling...";
 
-    // After a short delay, start rolling animation for all visible dice together
-    setTimeout(() => {
-        const visibleDice = [];
-        for (let i = 0; i < letters.length; i++) {
-            const die = diceElements[i];
-            const span = die.querySelector(".dice-letter");
-            visibleDice.push({ die, span });
+    // Each die reveals its letter every 0.4 seconds
+    letters.forEach((letter, index) => {
+        const die = diceElements[index];
+        const span = die.querySelector(".dice-letter");
+
+        // Start each die with a staggered delay
+        setTimeout(() => {
             die.classList.add("rolling");
-        }
 
-        const interval = setInterval(() => {
-            visibleDice.forEach(({ span }) => {
+            // This interval makes the die show random letters quickly
+            const rollInterval = setInterval(() => {
                 span.innerText = alphabet[Math.floor(Math.random() * alphabet.length)];
-            });
-        }, 80);
+            }, 60);
 
-        // Now stop dice one by one, every 0.4s, setting final letters
-        visibleDice.forEach(({ die, span }, index) => {
+            // After 0.4s, stop rolling and show the real letter
             setTimeout(() => {
+                clearInterval(rollInterval);
                 die.classList.remove("rolling");
-                span.innerText = letters[index];
+                span.innerText = letter;
 
-                // When last die settles, stop the random interval and update button text
-                if (index === visibleDice.length - 1) {
-                    clearInterval(interval);
+                // When the last letter is set, mark as revealed
+                if (index === letters.length - 1) {
                     revealBtn.innerText = "Revealed";
                 }
-            }, 400 * index); // 0.4 sec between reveals
-        });
-    }, 600); // wait a bit so drop-in starts first
+            }, 400);
+        }, index * 400); // 0.4s gap between each die
+    });
 }
 
 function reveal() {
