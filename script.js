@@ -261,35 +261,43 @@ function reveal() {
     startLudoAnimation(chosen);
 }
 
-/* ---------------- ADMIN RESET BUTTON ---------------- */
+/* ---------------- ADMIN RESET BUTTON (FINAL FIX) ---------------- */
 
-// Show admin reset button on secret key combo: CTRL + SHIFT + R
+// Reveal admin reset button on secret shortcut: CTRL + SHIFT + R
 document.addEventListener("keydown", function (e) {
     if (e.ctrlKey && e.shiftKey && e.key === "R") {
         const btn = document.getElementById("adminResetBtn");
         if (btn) {
-            btn.style.display = "block";
+            btn.style.display = "block";      // show button
+            btn.dataset.locked = "true";      // KEEP IT SHOWN
             alert("Admin Reset Mode Enabled");
         }
     }
 });
 
-// When admin clicks RESET
-const adminBtn = document.getElementById("adminResetBtn");
-if (adminBtn) {
-    adminBtn.addEventListener("click", function () {
-        if (
-            confirm(
-                "Are you sure? This will reset ALL Secret Santa assignments on this device."
-            )
-        ) {
-            // Only clear our keys, not everything
+// Mutation Observer to PREVENT button from being auto-hidden by page DOM updates
+const adminButton = document.getElementById("adminResetBtn");
+
+if (adminButton) {
+    const observer = new MutationObserver(() => {
+        if (adminButton.dataset.locked === "true") {
+            adminButton.style.display = "block"; // force it back on
+        }
+    });
+
+    observer.observe(document.body, { attributes: false, childList: true, subtree: true });
+}
+
+// When admin clicks RESET ALL
+if (adminButton) {
+    adminButton.addEventListener("click", function () {
+        if (confirm("Are you sure? This will reset ALL Secret Santa assignments on this device.")) {
             localStorage.removeItem("assigned");
             localStorage.removeItem("available");
             localStorage.removeItem("deviceLockedName");
             localStorage.removeItem("storageVersion");
 
-            alert("Secret Santa data cleared. Page will reload.");
+            alert("All Secret Santa data cleared. Page will reload.");
             location.reload();
         }
     });
