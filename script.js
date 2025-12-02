@@ -15,7 +15,7 @@ const families = {
 const MAX_DICE = 7;
 
 /* ---------- ONE-TIME STORAGE RESET (to avoid old corrupted data) ---------- */
-const STORAGE_VERSION = "v2";
+const STORAGE_VERSION = "v4";
 
 if (localStorage.getItem("storageVersion") !== STORAGE_VERSION) {
     localStorage.removeItem("assigned");
@@ -23,6 +23,7 @@ if (localStorage.getItem("storageVersion") !== STORAGE_VERSION) {
     localStorage.removeItem("deviceLockedName");
     localStorage.setItem("storageVersion", STORAGE_VERSION);
 }
+
 /* ------------------------------------------------------------------------- */
 
 // Safe JSON parse in case old data is corrupt
@@ -266,16 +267,31 @@ function reveal() {
 document.addEventListener("keydown", function (e) {
     if (e.ctrlKey && e.shiftKey && e.key === "R") {
         const btn = document.getElementById("adminResetBtn");
-        btn.style.display = "block";
-        alert("Admin Reset Mode Enabled");
+        if (btn) {
+            btn.style.display = "block";
+            alert("Admin Reset Mode Enabled");
+        }
     }
 });
 
 // When admin clicks RESET
-document.getElementById("adminResetBtn").addEventListener("click", function () {
-    if (confirm("Are you sure? This will reset ALL assignments permanently.")) {
-        localStorage.clear();
-        location.reload();
-    }
-});
+const adminBtn = document.getElementById("adminResetBtn");
+if (adminBtn) {
+    adminBtn.addEventListener("click", function () {
+        if (
+            confirm(
+                "Are you sure? This will reset ALL Secret Santa assignments on this device."
+            )
+        ) {
+            // Only clear our keys, not everything
+            localStorage.removeItem("assigned");
+            localStorage.removeItem("available");
+            localStorage.removeItem("deviceLockedName");
+            localStorage.removeItem("storageVersion");
+
+            alert("Secret Santa data cleared. Page will reload.");
+            location.reload();
+        }
+    });
+}
 
