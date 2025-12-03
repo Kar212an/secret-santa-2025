@@ -261,23 +261,23 @@ function reveal() {
     startLudoAnimation(chosen);
 }
 
-/* ---------------- ADMIN RESET BUTTON (FINAL FIX) ---------------- */
+/* ---------------- ADMIN RESET BUTTON (FINAL) ---------------- */
 
-// Reveal admin reset button on secret shortcut: CTRL + SHIFT + R
+const adminButton = document.getElementById("adminResetBtn");
+
+// Secret shortcut: CTRL + ALT + R (changed from Ctrl + Shift + R to avoid browser hard refresh)
 document.addEventListener("keydown", function (e) {
-    if (e.ctrlKey && e.shiftKey && e.key === "R") {
-        const btn = document.getElementById("adminResetBtn");
-        if (btn) {
-            btn.style.display = "block";      // show button
-            btn.dataset.locked = "true";      // KEEP IT SHOWN
+    if (e.ctrlKey && e.altKey && e.key.toLowerCase() === "r") {
+        if (adminButton) {
+            adminButton.style.display = "block";      // show button
+            adminButton.dataset.locked = "true";      // keep it shown
             alert("Admin Reset Mode Enabled");
         }
+        e.preventDefault(); // block any default browser behaviour
     }
 });
 
 // Mutation Observer to PREVENT button from being auto-hidden by page DOM updates
-const adminButton = document.getElementById("adminResetBtn");
-
 if (adminButton) {
     const observer = new MutationObserver(() => {
         if (adminButton.dataset.locked === "true") {
@@ -285,11 +285,9 @@ if (adminButton) {
         }
     });
 
-    observer.observe(document.body, { attributes: false, childList: true, subtree: true });
-}
+    observer.observe(document.body, { childList: true, subtree: true });
 
-// When admin clicks RESET ALL
-if (adminButton) {
+    // When admin clicks RESET ALL
     adminButton.addEventListener("click", function () {
         if (confirm("Are you sure? This will reset ALL Secret Santa assignments on this device.")) {
             localStorage.removeItem("assigned");
@@ -302,4 +300,3 @@ if (adminButton) {
         }
     });
 }
-
