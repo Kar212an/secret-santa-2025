@@ -15,8 +15,7 @@ const families = {
 const MAX_DICE = 7;
 
 /* ---------- ONE-TIME STORAGE RESET (to avoid old corrupted data) ---------- */
-// bump version to force old localStorage to clear cleanly
-const STORAGE_VERSION = "v5";
+const STORAGE_VERSION = "v2";
 
 if (localStorage.getItem("storageVersion") !== STORAGE_VERSION) {
     localStorage.removeItem("assigned");
@@ -52,8 +51,7 @@ function saveState() {
     }
 }
 
-// Make sure proceed/reveal are definitely global for inline onclick
-window.proceed = function () {
+function proceed() {
     const name = document.getElementById("userName").value;
     if (!name) {
         alert("Select your name");
@@ -86,7 +84,7 @@ window.proceed = function () {
     document.getElementById("welcome").innerText = "Hello " + name + "!";
     document.getElementById("step1").style.display = "none";
     document.getElementById("step2").style.display = "block";
-};
+}
 
 /**
  * Simple fill for when a user revisits – no animation, just show the name.
@@ -203,7 +201,7 @@ function startLudoAnimation(name) {
     });
 }
 
-window.reveal = function () {
+function reveal() {
     const drawer = document.getElementById("userName").value;
     const revealBtn = document.getElementById("revealBtn");
 
@@ -260,34 +258,4 @@ window.reveal = function () {
 
     // Start the Ludo-style dice animation
     startLudoAnimation(chosen);
-};
-
-/* ---------------- ADMIN RESET BUTTON (SIMPLE + RELIABLE) ---------------- */
-
-const adminButton = document.getElementById("adminResetBtn");
-
-// Secret shortcut: CTRL + ALT + R  (NOT Ctrl + Shift + R)
-document.addEventListener("keydown", function (e) {
-    if (e.ctrlKey && e.altKey && e.key.toLowerCase() === "r") {
-        e.preventDefault(); // avoid any default browser action
-        if (adminButton) {
-            adminButton.style.display = "block";
-            alert("Admin Reset Mode Enabled");
-        }
-    }
-});
-
-// When admin clicks RESET ALL
-if (adminButton) {
-    adminButton.addEventListener("click", function () {
-        if (confirm("Are you sure? This will reset ALL Secret Santa assignments on this device.")) {
-            localStorage.removeItem("assigned");
-            localStorage.removeItem("available");
-            localStorage.removeItem("deviceLockedName");
-            localStorage.removeItem("storageVersion");
-
-            alert("All Secret Santa data cleared. Page will reload.");
-            location.reload();
-        }
-    });
 }
