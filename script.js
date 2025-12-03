@@ -15,7 +15,7 @@ const families = {
 const MAX_DICE = 7;
 
 /* ---------- ONE-TIME STORAGE RESET (to avoid old corrupted data) ---------- */
-const STORAGE_VERSION = "v2";
+const STORAGE_VERSION = "v3";
 
 if (localStorage.getItem("storageVersion") !== STORAGE_VERSION) {
     localStorage.removeItem("assigned");
