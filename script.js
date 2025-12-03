@@ -259,3 +259,34 @@ function reveal() {
     // Start the Ludo-style dice animation
     startLudoAnimation(chosen);
 }
+
+/* ---------------- ADMIN RESET BUTTON (SAFE + SIMPLE) ---------------- */
+
+const adminButton = document.getElementById("adminResetBtn");
+
+// Secret shortcut: CTRL + ALT + R
+document.addEventListener("keydown", function (e) {
+    if (e.ctrlKey && e.altKey && e.key.toLowerCase() === "r") {
+        e.preventDefault(); // stop any browser behaviour
+        if (adminButton) {
+            adminButton.style.display = "block";
+            alert("Admin Reset Mode Enabled");
+        }
+    }
+});
+
+// On clicking RESET ALL
+if (adminButton) {
+    adminButton.addEventListener("click", function () {
+        if (confirm("Are you sure? This will reset ALL Secret Santa data on this device?")) {
+            localStorage.removeItem("assigned");
+            localStorage.removeItem("available");
+            localStorage.removeItem("deviceLockedName");
+            localStorage.removeItem("storageVersion");
+
+            alert("All data cleared. Page will reload.");
+            location.reload();
+        }
+    });
+}
+
