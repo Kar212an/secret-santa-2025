@@ -15,7 +15,8 @@ const families = {
 const MAX_DICE = 7;
 
 /* ---------- ONE-TIME STORAGE RESET (to avoid old corrupted data) ---------- */
-const STORAGE_VERSION = "v4";
+// bump version to force old localStorage to clear cleanly
+const STORAGE_VERSION = "v5";
 
 if (localStorage.getItem("storageVersion") !== STORAGE_VERSION) {
     localStorage.removeItem("assigned");
@@ -23,7 +24,6 @@ if (localStorage.getItem("storageVersion") !== STORAGE_VERSION) {
     localStorage.removeItem("deviceLockedName");
     localStorage.setItem("storageVersion", STORAGE_VERSION);
 }
-
 /* ------------------------------------------------------------------------- */
 
 // Safe JSON parse in case old data is corrupt
@@ -52,7 +52,8 @@ function saveState() {
     }
 }
 
-function proceed() {
+// Make sure proceed/reveal are definitely global for inline onclick
+window.proceed = function () {
     const name = document.getElementById("userName").value;
     if (!name) {
         alert("Select your name");
@@ -85,7 +86,7 @@ function proceed() {
     document.getElementById("welcome").innerText = "Hello " + name + "!";
     document.getElementById("step1").style.display = "none";
     document.getElementById("step2").style.display = "block";
-}
+};
 
 /**
  * Simple fill for when a user revisits – no animation, just show the name.
@@ -202,7 +203,7 @@ function startLudoAnimation(name) {
     });
 }
 
-function reveal() {
+window.reveal = function () {
     const drawer = document.getElementById("userName").value;
     const revealBtn = document.getElementById("revealBtn");
 
@@ -259,35 +260,25 @@ function reveal() {
 
     // Start the Ludo-style dice animation
     startLudoAnimation(chosen);
-}
+};
 
-/* ---------------- ADMIN RESET BUTTON (FINAL) ---------------- */
+/* ---------------- ADMIN RESET BUTTON (SIMPLE + RELIABLE) ---------------- */
 
 const adminButton = document.getElementById("adminResetBtn");
 
-// Secret shortcut: CTRL + ALT + R (changed from Ctrl + Shift + R to avoid browser hard refresh)
+// Secret shortcut: CTRL + ALT + R  (NOT Ctrl + Shift + R)
 document.addEventListener("keydown", function (e) {
     if (e.ctrlKey && e.altKey && e.key.toLowerCase() === "r") {
+        e.preventDefault(); // avoid any default browser action
         if (adminButton) {
-            adminButton.style.display = "block";      // show button
-            adminButton.dataset.locked = "true";      // keep it shown
+            adminButton.style.display = "block";
             alert("Admin Reset Mode Enabled");
         }
-        e.preventDefault(); // block any default browser behaviour
     }
 });
 
-// Mutation Observer to PREVENT button from being auto-hidden by page DOM updates
+// When admin clicks RESET ALL
 if (adminButton) {
-    const observer = new MutationObserver(() => {
-        if (adminButton.dataset.locked === "true") {
-            adminButton.style.display = "block"; // force it back on
-        }
-    });
-
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    // When admin clicks RESET ALL
     adminButton.addEventListener("click", function () {
         if (confirm("Are you sure? This will reset ALL Secret Santa assignments on this device.")) {
             localStorage.removeItem("assigned");
