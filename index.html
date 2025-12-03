@@ -1,78 +1,52 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title>Secret Santa Draw</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="container">
-        <h1>🎉 New Year Secret Santa 2025 🎁</h1>
-
-        <div id="step1">
-            <label for="userName">Enter your name:</label>
-            <select id="userName">
-                <option value="">-- Select --</option>
-                <option>Karan</option>
-                <option>Krisha</option>
-                <option>Rekha</option>
-                <option>Raj</option>
-                <option>Shashi</option>
-                <option>Roopesh</option>
-                <option>Roosh</option>
-                <option>Manisha</option>
-                <option>Trevor</option>
-                <option>Shannon</option>
-            </select>
-            <!-- Keep inline handler so it's dead simple -->
-            <button onclick="proceed()">Proceed</button>
-        </div>
-
-        <div id="step2" style="display:none;">
-            <h2 id="welcome"></h2>
-            <button id="revealBtn" onclick="reveal()">Throw Dice & Reveal</button>
-        </div>
-
-        <div id="result" style="display:none;">
-            <h2>You got:</h2>
-
-            <!-- Ludo board style reveal -->
-            <div class="ludo-board">
-                <div class="ludo-background"></div>
-                <div class="dice-row" id="diceRow">
-                    <div class="dice"><span class="dice-letter">?</span></div>
-                    <div class="dice"><span class="dice-letter">?</span></div>
-                    <div class="dice"><span class="dice-letter">?</span></div>
-                    <div class="dice"><span class="dice-letter">?</span></div>
-                    <div class="dice"><span class="dice-letter">?</span></div>
-                    <div class="dice"><span class="dice-letter">?</span></div>
-                    <div class="dice"><span class="dice-letter">?</span></div>
-                </div>
+<html> 
+    <head> 
+        <title>Secret Santa Draw</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style.css"> 
+    </head>
+    <body>
+        <div class="container">
+            <h1>🎉 New Year Secret Santa 2025 🎁</h1> 
+            
+            <div id="step1">
+                <label for="userName">Enter your name:</label>
+                <select id="userName">
+                    <option value="">-- Select --</option>
+                    <option>Karan</option>
+                    <option>Krisha</option>
+                    <option>Rekha</option> 
+                    <option>Raj</option>
+                    <option>Shashi</option>
+                    <option>Roopesh</option>
+                    <option>Roosh</option>
+                    <option>Manisha</option>
+                    <option>Trevor</option>
+                    <option>Shannon</option>
+                </select> 
+                <button onclick="proceed()">Proceed</button> </div>
+            <div id="step2" style="display:none;">
+                <h2 id="welcome"></h2>
+                <button id="revealBtn" onclick="reveal()">Throw Dice & Reveal</button>
             </div>
-
-            <p class="note">This assignment is locked and cannot be changed.</p>
-        </div>
-    </div>
-
-    <!-- Admin reset button (hidden by default) -->
-    <button id="adminResetBtn" style="
-        display:none;
-        position:fixed;
-        bottom:20px;
-        right:20px;
-        padding:10px 18px;
-        background:red;
-        color:white;
-        border:none;
-        border-radius:8px;
-        font-size:14px;
-        cursor:pointer;
-        z-index:9999;
-    ">
-        RESET ALL
-    </button>
-
-    <!-- IMPORTANT: script is at the very end so DOM is fully ready -->
-    <script src="script.js"></script>
-</body>
+            <div id="result" style="display:none;"> 
+                <h2>You got:</h2>
+                <!-- Ludo board style reveal --> 
+                <div class="ludo-board">
+                    <div class="ludo-background"></div>
+                    <div class="dice-row" id="diceRow">
+                        <div class="dice"><span class="dice-letter">?</span></div> 
+                        <div class="dice"><span class="dice-letter">?</span></div>
+                        <div class="dice"><span class="dice-letter">?</span></div>
+                        <div class="dice"><span class="dice-letter">?</span></div>
+                        <div class="dice"><span class="dice-letter">?</span></div>
+                        <div class="dice"><span class="dice-letter">?</span></div>
+                        <div class="dice"><span class="dice-letter">?</span></div>
+                    </div>
+                </div>
+                <p class="note">This assignment is locked and cannot be changed.</p>
+            </div>
+        </div> 
+        <script src="script.js"></script>
+    </body> 
 </html>
